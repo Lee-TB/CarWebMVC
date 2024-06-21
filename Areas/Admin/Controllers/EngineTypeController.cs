@@ -6,22 +6,22 @@ using CarWebMVC.Models;
 namespace CarWebMVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
-public class ManufacturerController : Controller
+public class EngineTypeController : Controller
 {
     private readonly AppDbContext _context;
 
-    public ManufacturerController(AppDbContext context)
+    public EngineTypeController(AppDbContext context)
     {
         _context = context;
     }
 
-    // GET: Manufacturer
+    // GET: EngineType
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Manufacturers.ToListAsync());
+        return View(await _context.EngineTypes.ToListAsync());
     }
 
-    // GET: Manufacturer/Details/5
+    // GET: EngineType/Details/5
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
@@ -29,39 +29,39 @@ public class ManufacturerController : Controller
             return NotFound();
         }
 
-        var manufacturer = await _context.Manufacturers
+        var engineType = await _context.EngineTypes
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (manufacturer == null)
+        if (engineType == null)
         {
             return NotFound();
         }
 
-        return View(manufacturer);
+        return View(engineType);
     }
 
-    // GET: Manufacturer/Create
+    // GET: EngineType/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: Manufacturer/Create
+    // POST: EngineType/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Name,Country,FoundedYear")] Manufacturer manufacturer)
+    public async Task<IActionResult> Create([Bind("Id,Name")] EngineType engineType)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(manufacturer);
+            _context.Add(engineType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        return View(manufacturer);
+        return View(engineType);
     }
 
-    // GET: Manufacturer/Edit/5
+    // GET: EngineType/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -69,22 +69,22 @@ public class ManufacturerController : Controller
             return NotFound();
         }
 
-        var manufacturer = await _context.Manufacturers.FindAsync(id);
-        if (manufacturer == null)
+        var engineType = await _context.EngineTypes.FindAsync(id);
+        if (engineType == null)
         {
             return NotFound();
         }
-        return View(manufacturer);
+        return View(engineType);
     }
 
-    // POST: Manufacturer/Edit/5
+    // POST: EngineType/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Country,FoundedYear")] Manufacturer manufacturer)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] EngineType engineType)
     {
-        if (id != manufacturer.Id)
+        if (id != engineType.Id)
         {
             return NotFound();
         }
@@ -93,12 +93,12 @@ public class ManufacturerController : Controller
         {
             try
             {
-                _context.Update(manufacturer);
+                _context.Update(engineType);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ManufacturerExists(manufacturer.Id))
+                if (!EngineTypeExists(engineType.Id))
                 {
                     return NotFound();
                 }
@@ -109,10 +109,10 @@ public class ManufacturerController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        return View(manufacturer);
+        return View(engineType);
     }
 
-    // GET: Manufacturer/Delete/5
+    // GET: EngineType/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -120,33 +120,33 @@ public class ManufacturerController : Controller
             return NotFound();
         }
 
-        var manufacturer = await _context.Manufacturers
+        var engineType = await _context.EngineTypes
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (manufacturer == null)
+        if (engineType == null)
         {
             return NotFound();
         }
 
-        return View(manufacturer);
+        return View(engineType);
     }
 
-    // POST: Manufacturer/Delete/5
+    // POST: EngineType/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var manufacturer = await _context.Manufacturers.FindAsync(id);
-        if (manufacturer != null)
+        var engineType = await _context.EngineTypes.FindAsync(id);
+        if (engineType != null)
         {
-            _context.Manufacturers.Remove(manufacturer);
+            _context.EngineTypes.Remove(engineType);
         }
 
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool ManufacturerExists(int id)
+    private bool EngineTypeExists(int id)
     {
-        return _context.Manufacturers.Any(e => e.Id == id);
+        return _context.EngineTypes.Any(e => e.Id == id);
     }
 }
