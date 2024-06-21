@@ -7,47 +7,83 @@
   <title>@ViewData["Title"]</title>
   <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/CarWebMVC.styles.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/css/sidebars.css" asp-append-version="true" />
+
 </head>
 
 <body>
   <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-      <div class="container">
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Logo</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      <div class="container-fluid">
+        <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-          <ul class="navbar-nav flex-grow-1">
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="nav nav-pills flex-column mb-auto d-lg-none">
             <li class="nav-item">
-              <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang
-                chủ</a>
+              <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-link link-dark"
+                aria-current="page">
+                Bảng điều khiển
+              </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Chính
-                sách</a>
+            <li>
+              <a asp-area="Admin" asp-controller="Manufacturer" asp-action="Index" class="nav-link link-dark">
+                Hãng xe
+              </a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
   </header>
-  <div class="container">
-    <main role="main" class="pb-3">
-      @RenderBody()
-    </main>
+
+  <div class="d-flex">
+    <nav class="flex-column flex-shrink-0 p-3 bg-light d-none d-lg-flex sidebar-height border-end"
+      style="width: 280px;">
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="nav-link link-dark"
+            aria-current="page">
+            Bảng điều khiển
+          </a>
+        </li>
+        <span class="border-bottom"></span>
+        <li>
+          <a asp-area="Admin" asp-controller="Manufacturer" asp-action="Index" class="nav-link link-dark">
+            Hãng xe
+          </a>
+        </li>
+      </ul>
+      <hr>
+      <button>Logout</button>
+    </nav>
+
+
+    <div class="flex-grow-1 d-flex flex-column sidebar-height">
+      <div class="container">
+        <main role="main" class="py-3">
+          @RenderBody()
+        </main>
+      </div>
+
+      <footer class="footer-height mt-auto d-flex align-items-center border-top footer text-muted">
+        <div class="container">
+          &copy; 2024 - CarWebMVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+      </footer>
+    </div>
   </div>
 
-  <footer class="border-top footer text-muted">
-    <div class="container">
-      &copy; 2024 - CarWebMVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-  </footer>
+
+
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
   <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="~/js/site.js" asp-append-version="true"></script>
+  <script src="~/js/sidebars.js" asp-append-version="true"></script>
   @await RenderSectionAsync("Scripts", required: false)
 </body>
 
