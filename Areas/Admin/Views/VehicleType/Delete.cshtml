@@ -1,0 +1,31 @@
+@model CarWebMVC.Models.VehicleType
+
+@{
+    ViewData["Title"] = "Xóa kiểu dáng";
+}
+
+<div>
+    <h1>Xóa kiểu dáng</h1>
+
+    <p>Bạn có chắc muốn xóa kiểu dáng này?</p>
+    <div>
+        <h4>VehicleType</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Xóa luôn" class="btn btn-danger" /> |
+            <a asp-action="Index">
+                Quay lại danh sách
+            </a>
+        </form>
+    </div>
+</div>
