@@ -14,5 +14,6 @@ public class VehicleModel
     public int NumberOfDoors { get; set; }
     public int NumberOfSeats { get; set; }
 
+    public EngineType EngineType { get; set; }
     public VehicleLine VehicleLine { get; set; }
 }
