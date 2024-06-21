@@ -1,0 +1,45 @@
+@model CarWebMVC.Models.Manufacturer
+
+@{
+    ViewData["Title"] = "Thêm hãng xe";
+}
+<div class="w-100">
+    <h1>Thêm hãng xe</h1>
+    <hr />
+    <div class="row w-100">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Country" class="control-label"></label>
+                    <input asp-for="Country" class="form-control" />
+                    <span asp-validation-for="Country" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="FoundedYear" class="control-label"></label>
+                    <input asp-for="FoundedYear" class="form-control" />
+                    <span asp-validation-for="FoundedYear" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mt-2 d-flex justify-content-end">
+                    <input type="submit" role="button" value="Thêm" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Quay lại danh sách</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

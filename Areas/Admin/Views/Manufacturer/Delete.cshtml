@@ -1,0 +1,42 @@
+@model CarWebMVC.Models.Manufacturer
+
+@{
+    ViewData["Title"] = "Xóa hãng xe";
+}
+
+<div class="w-100">
+
+    <h1>Xóa hãng xe</h1>
+    <p>Không thể phục hồi dữ liệu sau khi đã xóa. Bạn có chắc muốn xóa hãng xe này?</p>
+    <div>
+        <hr />
+        <dl class="row w-100">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Country)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Country)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.FoundedYear)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.FoundedYear)
+            </dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Xóa vĩnh viễn" class="btn btn-danger" /> |
+            <a asp-action="Index">
+                Quay lại danh sách
+            </a>
+        </form>
+    </div>
+</div>
