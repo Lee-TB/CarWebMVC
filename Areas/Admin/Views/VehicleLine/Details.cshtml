@@ -1,0 +1,37 @@
+@model CarWebMVC.Models.VehicleLine
+
+@{
+    ViewData["Title"] = "Chi tiết dòng xe";
+}
+
+<div class="w-100">
+    <h1>Chi tiết dòng xe</h1>
+
+    <div>
+        <hr />
+        <dl class="row w-100">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Manufacturer.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Manufacturer.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.VehicleType.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.VehicleType.Name)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Chỉnh sửa</a> |
+        <a asp-action="Index">Quay lại danh sách</a>
+    </div>
+</div>

@@ -5,7 +5,7 @@ namespace CarWebMVC.Models;
 public class Manufacturer
 {
     public int Id { get; set; }
-    [DisplayName("Tên hãng")]
+    [DisplayName("Hãng xe")]
     public string Name { get; set; }
     [DisplayName("Quốc gia")]
     public string? Country { get; set; }
