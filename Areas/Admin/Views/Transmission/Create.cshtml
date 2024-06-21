@@ -1,0 +1,43 @@
+@model CarWebMVC.Models.Transmission
+
+@{
+    ViewData["Title"] = "Thêm loại hộp số";
+}
+
+<div class="w-100">
+    <h1>Thêm loại hộp số</h1>
+
+    <hr />
+    <div class="row w-100">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-2 d-flex justify-content-end">
+                    <input type="submit" value="Thêm" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">
+            Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

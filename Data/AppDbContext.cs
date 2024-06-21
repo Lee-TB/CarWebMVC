@@ -16,5 +16,6 @@ namespace CarWebMVC.Data
         public DbSet<Manufacturer> Manufacturers { get; set; }
         public DbSet<VehicleLine> VehicleLines { get; set; }
         public DbSet<VehicleModel> VehicleModels { get; set; }
+        public DbSet<Transmission> Transmission { get; set; } = default!;
     }
 }
