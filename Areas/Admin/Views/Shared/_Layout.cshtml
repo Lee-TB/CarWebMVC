@@ -15,7 +15,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
       <div class="container-fluid">
-        <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
+        <a class="navbar-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang quản trị</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,9 +30,40 @@
                 Dashboard
               </a>
             </li>
+            <span class="border-bottom"></span>
+            <li>
+              <a asp-area="Admin" asp-controller="VehicleModel" asp-action="Index" class="nav-link link-dark">
+                Mẫu xe
+              </a>
+            </li>
+            <span class="border-bottom"></span>
+            <li>
+              <a asp-area="Admin" asp-controller="VehicleLine" asp-action="Index" class="nav-link link-dark">
+                Dòng xe
+              </a>
+            </li>
+            <span class="border-bottom"></span>
             <li>
               <a asp-area="Admin" asp-controller="Manufacturer" asp-action="Index" class="nav-link link-dark">
                 Hãng xe
+              </a>
+            </li>
+            <span class="border-bottom"></span>
+            <li>
+              <a asp-area="Admin" asp-controller="VehicleType" asp-action="Index" class="nav-link link-dark">
+                Kiểu dáng
+              </a>
+            </li>
+            <span class="border-bottom"></span>
+            <li>
+              <a asp-area="Admin" asp-controller="EngineType" asp-action="Index" class="nav-link link-dark">
+                Loại động cơ
+              </a>
+            </li>
+            <span class="border-bottom"></span>
+            <li>
+              <a asp-area="Admin" asp-controller="Transmission" asp-action="Index" class="nav-link link-dark">
+                Loại hộp số
               </a>
             </li>
           </ul>
@@ -53,14 +84,20 @@
         </li>
         <span class="border-bottom"></span>
         <li>
-          <a asp-area="Admin" asp-controller="Manufacturer" asp-action="Index" class="nav-link link-dark">
-            Hãng xe
+          <a asp-area="Admin" asp-controller="VehicleModel" asp-action="Index" class="nav-link link-dark">
+            Mẫu xe
           </a>
         </li>
         <span class="border-bottom"></span>
         <li>
-          <a asp-area="Admin" asp-controller="EngineType" asp-action="Index" class="nav-link link-dark">
-            Loại động cơ
+          <a asp-area="Admin" asp-controller="VehicleLine" asp-action="Index" class="nav-link link-dark">
+            Dòng xe
+          </a>
+        </li>
+        <span class="border-bottom"></span>
+        <li>
+          <a asp-area="Admin" asp-controller="Manufacturer" asp-action="Index" class="nav-link link-dark">
+            Hãng xe
           </a>
         </li>
         <span class="border-bottom"></span>
@@ -71,8 +108,8 @@
         </li>
         <span class="border-bottom"></span>
         <li>
-          <a asp-area="Admin" asp-controller="VehicleLine" asp-action="Index" class="nav-link link-dark">
-            Dòng xe
+          <a asp-area="Admin" asp-controller="EngineType" asp-action="Index" class="nav-link link-dark">
+            Loại động cơ
           </a>
         </li>
         <span class="border-bottom"></span>
@@ -89,7 +126,7 @@
 
     <div class="flex-grow-1 d-flex flex-column sidebar-height">
       <div class="container">
-        <main role="main" class="py-3">
+        <main role=" main" class="py-3">
           @RenderBody()
         </main>
       </div>

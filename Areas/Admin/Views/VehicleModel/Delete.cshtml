@@ -1,0 +1,89 @@
+@model CarWebMVC.Models.VehicleModel
+
+@{
+    ViewData["Title"] = "Xóa mẫu xe";
+}
+
+<div class="w-100">
+    <h1>Xóa mẫu xe</h1>
+    <p>Dữ liệu đã xóa không thể phục hồi. Bạn có chắc muốn xóa mẫu xe này?</p>
+    <div>
+        <hr />
+        <dl class="row w-100">
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.Price)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.VehicleLine.Name)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.VehicleLine.Name)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.Transmission.Name)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.Transmission.Name)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.EngineType.Name)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.EngineType.Name)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.Color)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.Color)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.InteriorColor)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.InteriorColor)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.CountryOfOrigin)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.CountryOfOrigin)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.Year)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.Year)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.NumberOfDoors)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.NumberOfDoors)
+            </dd>
+            <dt class="col-sm-3 col-md-3 col-lg-2">
+                @Html.DisplayNameFor(model => model.NumberOfSeats)
+            </dt>
+            <dd class="col-sm-9 col-md-3 col-lg-2">
+                @Html.DisplayFor(model => model.NumberOfSeats)
+            </dd>
+        </dl>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Xóa luôn" class="btn btn-danger" /> |
+        <a asp-action="Index">
+            Quay lại danh sách
+        </a>
+    </form>
+</div>

@@ -1,0 +1,178 @@
+@model IEnumerable<CarWebMVC.Models.VehicleModel>
+
+@{
+    ViewData["Title"] = "Mẫu xe";
+}
+
+
+<div class="w-100">
+    <h1>Mẫu xe</h1>
+
+    <p>
+        <a asp-action="Create">Thêm mới</a>
+    </p>
+    <div class="table-responsive">
+        <table class="table table-striped d-none d-lg-table">
+            <thead>
+                <tr>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Price)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.VehicleLine.Name)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Transmission.Name)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.EngineType.Name)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Color)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.InteriorColor)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.CountryOfOrigin)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Year)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.NumberOfDoors)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.NumberOfSeats)
+                    </th>
+                    <th style="min-width: 100px;">
+                        Thao tác
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VehicleLine.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Transmission.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EngineType.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Color)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InteriorColor)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CountryOfOrigin)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Year)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NumberOfDoors)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NumberOfSeats)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Chỉnh sửa</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <table class="table table-striped d-table d-lg-none">
+            <thead>
+                <tr>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Price)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.VehicleLine.Name)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Transmission.Name)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.EngineType.Name)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Color)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.InteriorColor)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.CountryOfOrigin)
+                    </th>
+                    <th style="min-width: 100px;">
+                        @Html.DisplayNameFor(model => model.Year)
+                    </th>
+                    <th style="min-width: 100px;">
+                        Thao tác
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VehicleLine.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Transmission.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EngineType.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Color)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InteriorColor)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CountryOfOrigin)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Year)
+                        </td>
+                        <td class="d-grid gap-1">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Chỉnh sửa</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Chi tiết</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Xóa</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

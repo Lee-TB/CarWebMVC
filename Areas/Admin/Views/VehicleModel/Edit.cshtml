@@ -1,0 +1,97 @@
+@model CarWebMVC.Models.VehicleModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa mẫu xe";
+}
+
+<div class="w-100">
+    <h1>Chỉnh sửa mẫu xe</h1>
+
+    <hr />
+    <div class="w-100">
+        <form asp-action="Edit">
+            <div class="row w-100 g-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id">
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="VehicleLine.Name" class="control-label"></label>
+                    <select asp-for="VehicleLineId" class="form-control" asp-items="ViewBag.VehicleLineSelectItems">
+                        <option value="" selected disabled>Chọn dòng xe</option>
+                    </select>
+                    <span asp-validation-for="VehicleLineId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="Transmission.Name" class="control-label"></label>
+                    <select asp-for="TransmissionId" class="form-control" asp-items="ViewBag.TransmissionSelectItems">
+                        <option value="" selected disabled>Chọn loại hộp số</option>
+                    </select>
+                    <span asp-validation-for="TransmissionId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="EngineType.Name" class="control-label"></label>
+                    <select asp-for="EngineTypeId" class="form-control" asp-items="ViewBag.EngineTypeSelectItems">
+                        <option value="" selected disabled>Chọn loại động cơ</option>
+                    </select>
+                    <span asp-validation-for="EngineTypeId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="Color" class="control-label"></label>
+                    <input asp-for="Color" class="form-control" />
+                    <span asp-validation-for="Color" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="InteriorColor" class="control-label"></label>
+                    <input asp-for="InteriorColor" class="form-control" />
+                    <span asp-validation-for="InteriorColor" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="CountryOfOrigin" class="control-label"></label>
+                    <input asp-for="CountryOfOrigin" class="form-control" />
+                    <span asp-validation-for="CountryOfOrigin" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="Year" class="control-label"></label>
+                    <input asp-for="Year" class="form-control" />
+                    <span asp-validation-for="Year" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="NumberOfDoors" class="control-label"></label>
+                    <input asp-for="NumberOfDoors" class="form-control" />
+                    <span asp-validation-for="NumberOfDoors" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <label asp-for="NumberOfSeats" class="control-label"></label>
+                    <input asp-for="NumberOfSeats" class="form-control" />
+                    <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
+                </div>
+
+
+                <div class="col-md-12 d-flex justify-content-end">
+                    <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <a asp-action="Index">
+            Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
