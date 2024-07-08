@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using CarWebMVC.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using CarWebMVC.Services;
+using CarWebMVC.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -18,6 +20,9 @@ var builder = WebApplication.CreateBuilder(args);
     });
 
     builder.Services.AddControllersWithViews();
+
+    builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+    builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
 }
 
 var app = builder.Build();

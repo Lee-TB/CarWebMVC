@@ -1,0 +1,39 @@
+<script src="https://upload-widget.cloudinary.com/latest/global/all.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', async () =>
+  {
+    const response = await fetch('/api/cloudinary/generate-signature');
+    const data = await response.json();
+
+    const options = {
+      cloudName: data.cloudName,
+      apiKey: data.apiKey,
+      uploadSignatureTimestamp: data.timestamp,
+      uploadSignature: data.signature,
+      uploadPreset: data.uploadPreset,
+    }
+
+    console.log(options);
+
+    const processResults = (error, result) =>
+    {
+      if (!error && result && result.event === 'success')
+      {
+        console.log(result)
+
+        var str = JSON.stringify(result, null, 4);
+        document.getElementById("uwdata").innerHTML += str;
+      }
+    }
+
+    const widget = window.cloudinary.createUploadWidget(
+      options,
+      processResults
+    )
+
+    document
+      .getElementById('upload_widget')
+      .addEventListener('click', () => widget.open(), false)
+  });                    
+</script>
