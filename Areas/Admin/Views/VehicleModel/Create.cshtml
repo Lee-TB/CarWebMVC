@@ -73,6 +73,33 @@
                     <input asp-for="NumberOfSeats" class="form-control" />
                     <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
                 </div>
+                <div class="col-md-12 col-lg-12">
+                    <label class="control-label">
+                        Hình ảnh
+                    </label>
+                    <p style="font-size: 14px; user-select: none;"><em
+                            title="Ảnh được chọn sẽ được lưu vào database">Tải ảnh lên và chọn
+                            ảnh</em>
+                    </p>
+
+                    <div id="ImagesPreview" class="mt-2 d-flex gap-3 flex-wrap">
+                        @if (ViewBag.ExistingImageList?.Count > 0)
+                        {
+                            foreach (var existingImage in ViewBag.ExistingImageList)
+                            {
+                                <label class="form-check-label position-relative" style="cursor: pointer;">
+                                    <input type="checkbox" class="position-absolute form-check-input mx-1" name="ImageList"
+                                        value="@existingImage" checked />
+                                    <img src="@existingImage" class="border" style="max-width: 200px; max-height: 100px;" />
+                                </label>
+                            }
+                        }
+                    </div>
+
+                    <button type="button" id="upload_widget" class="btn btn-primary btn-sm d-block my-2">Tải ảnh
+                        lên</button>
+
+                </div>
 
 
                 <div class="col-md-12 d-flex justify-content-end">
@@ -92,5 +119,6 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_CloudinaryScriptsPartial");
     }
 }

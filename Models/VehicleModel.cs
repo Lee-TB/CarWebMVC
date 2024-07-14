@@ -33,6 +33,7 @@ public class VehicleModel
     [DisplayName("Số chỗ ngồi")]
     [Range(1, 100, ErrorMessage = "Số chỗ ngồi nằm trong khoảng từ 1 đến 100")]
     public int? NumberOfSeats { get; set; }
+    public ICollection<VehicleImage>? Images { get; set; }
     [Required(ErrorMessage = "Loại hộp số không được để trống")]
     public int TransmissionId { get; set; }
     public Transmission? Transmission { get; set; }

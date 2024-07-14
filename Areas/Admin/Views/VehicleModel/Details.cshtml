@@ -1,4 +1,4 @@
-@model CarWebMVC.Models.VehicleModel
+@model CarWebMVC.Models.ViewModels.VehicleModelViewModel
 
 @{
     ViewData["Title"] = "Chi tiết mẫu xe";
@@ -23,22 +23,22 @@
                 @Html.DisplayFor(model => model.Price)
             </dd>
             <dt class="col-sm-3 col-md-3 col-lg-2">
-                @Html.DisplayNameFor(model => model.VehicleLine.Name)
+                @Html.DisplayNameFor(model => model.VehicleLineName)
             </dt>
             <dd class="col-sm-9 col-md-3 col-lg-2">
-                @Html.DisplayFor(model => model.VehicleLine.Name)
+                @Html.DisplayFor(model => model.VehicleLineName)
             </dd>
             <dt class="col-sm-3 col-md-3 col-lg-2">
-                @Html.DisplayNameFor(model => model.Transmission.Name)
+                @Html.DisplayNameFor(model => model.TransmissionName)
             </dt>
             <dd class="col-sm-9 col-md-3 col-lg-2">
-                @Html.DisplayFor(model => model.Transmission.Name)
+                @Html.DisplayFor(model => model.TransmissionName)
             </dd>
             <dt class="col-sm-3 col-md-3 col-lg-2">
-                @Html.DisplayNameFor(model => model.EngineType.Name)
+                @Html.DisplayNameFor(model => model.EngineTypeName)
             </dt>
             <dd class="col-sm-9 col-md-3 col-lg-2">
-                @Html.DisplayFor(model => model.EngineType.Name)
+                @Html.DisplayFor(model => model.EngineTypeName)
             </dd>
             <dt class="col-sm-3 col-md-3 col-lg-2">
                 @Html.DisplayNameFor(model => model.Color)
@@ -76,12 +76,51 @@
             <dd class="col-sm-9 col-md-3 col-lg-2">
                 @Html.DisplayFor(model => model.NumberOfSeats)
             </dd>
+            <dt class="col-12 mt-4">
+                Hình ảnh
+            </dt>
+            <dd class="col-12 d-flex flex-wrap">
+                @if (Model.ImageUrls.Count > 0)
+                {
+                    foreach (var imgUrl in Model.ImageUrls)
+                    {
+                        <img src="@Url.Content(imgUrl)" class="img-thumbnail m-1"
+                            style="max-width: 200px; max-height: 200px;" />
+                    }
+                }
+            </dd>
         </dl>
     </div>
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Chỉnh sửa</a> |
-        <a asp-action="Index">
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary btn-sm me-auto" asp-action="Index">
             Quay lại danh sách
         </a>
+        <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@Model?.Id">Chỉnh sửa</a>
+        <!-- Button trigger modal -->
+        <a class="btn btn-warning btn-sm" type="button" class="link" data-bs-toggle="modal"
+            data-bs-target="#deleteModal">
+            Xóa
+        </a>
+
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Xóa mẫu xe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa mẫu xe này không?
+                </div>
+                <div class="modal-footer">
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="submit" value="Xóa luôn" class="btn btn-danger btn-sm" />
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
