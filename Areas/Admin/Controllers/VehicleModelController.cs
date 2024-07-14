@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using CarWebMVC.Data;
 using CarWebMVC.Models;
 using CarWebMVC.Models.ViewModels;
+using AutoMapper;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 
@@ -11,10 +12,12 @@ namespace CarWebMVC.Areas.Admin.Controllers;
 public class VehicleModelController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public VehicleModelController(AppDbContext context)
+    public VehicleModelController(AppDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     // GET: VehicleModel
@@ -26,23 +29,9 @@ public class VehicleModelController : Controller
             .Include(v => v.VehicleLine)
             .Include(v => v.Images).ToListAsync();
 
-        var vehicleModelViewModelList = vehicleModels.Select(vehicleModel => new VehicleModelViewModel
-        {
-            Id = vehicleModel.Id,
-            Name = vehicleModel.Name,
-            Price = vehicleModel.Price,
-            Color = vehicleModel.Color,
-            InteriorColor = vehicleModel.InteriorColor,
-            CountryOfOrigin = vehicleModel.CountryOfOrigin,
-            Year = vehicleModel.Year,
-            NumberOfDoors = vehicleModel.NumberOfDoors,
-            NumberOfSeats = vehicleModel.NumberOfSeats,
-            Images = vehicleModel.Images,
-            TransmissionName = vehicleModel.Transmission?.Name,
-            EngineTypeName = vehicleModel.EngineType?.Name,
-            VehicleLineName = vehicleModel.VehicleLine?.Name
-        }).ToList();
-
+        var vehicleModelViewModelList = vehicleModels
+            .Select(vehicleModel => _mapper.Map<VehicleModelViewModel>(vehicleModel))
+            .ToList();
 
         return View(vehicleModelViewModelList);
     }
@@ -67,22 +56,7 @@ public class VehicleModelController : Controller
             return NotFound();
         }
 
-        var vehicleModelViewModel = new VehicleModelViewModel
-        {
-            Id = vehicleModel.Id,
-            Name = vehicleModel.Name,
-            Price = vehicleModel.Price,
-            Color = vehicleModel.Color,
-            InteriorColor = vehicleModel.InteriorColor,
-            CountryOfOrigin = vehicleModel.CountryOfOrigin,
-            Year = vehicleModel.Year,
-            NumberOfDoors = vehicleModel.NumberOfDoors,
-            NumberOfSeats = vehicleModel.NumberOfSeats,
-            Images = vehicleModel.Images,
-            TransmissionName = vehicleModel.Transmission?.Name,
-            EngineTypeName = vehicleModel.EngineType?.Name,
-            VehicleLineName = vehicleModel.VehicleLine?.Name
-        };
+        var vehicleModelViewModel = _mapper.Map<VehicleModelViewModel>(vehicleModel);
 
         return View(vehicleModelViewModel);
     }
@@ -100,12 +74,12 @@ public class VehicleModelController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Id,Name,Price,Color,InteriorColor,CountryOfOrigin,Year,NumberOfDoors,NumberOfSeats,TransmissionId,EngineTypeId,VehicleLineId")] VehicleModel vehicleModel, 
+        [Bind("Id,Name,Price,Color,InteriorColor,CountryOfOrigin,Year,NumberOfDoors,NumberOfSeats,TransmissionId,EngineTypeId,VehicleLineId")] VehicleModel vehicleModel,
         List<string> newImageUrls)
     {
         if (ModelState.IsValid)
-        {            
-            vehicleModel.Images = newImageUrls.Select(image => new VehicleImage { ImageUrl = image }).ToList();            
+        {
+            vehicleModel.Images = newImageUrls.Select(image => new VehicleImage { ImageUrl = image }).ToList();
             _context.Add(vehicleModel);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -138,25 +112,7 @@ public class VehicleModelController : Controller
             return NotFound();
         }
 
-        var vehicleModelViewModel = new VehicleModelViewModel
-        {
-            Id = vehicleModel.Id,
-            Name = vehicleModel.Name,
-            Price = vehicleModel.Price,
-            Color = vehicleModel.Color,
-            InteriorColor = vehicleModel.InteriorColor,
-            CountryOfOrigin = vehicleModel.CountryOfOrigin,
-            Year = vehicleModel.Year,
-            NumberOfDoors = vehicleModel.NumberOfDoors,
-            NumberOfSeats = vehicleModel.NumberOfSeats,
-            Images = vehicleModel.Images,
-            TransmissionName = vehicleModel.Transmission?.Name,
-            EngineTypeName = vehicleModel.EngineType?.Name,
-            VehicleLineName = vehicleModel.VehicleLine?.Name,
-            TransmissionId = vehicleModel.TransmissionId,
-            EngineTypeId = vehicleModel.EngineTypeId,
-            VehicleLineId = vehicleModel.VehicleLineId
-        };
+        var vehicleModelViewModel = _mapper.Map<VehicleModelViewModel>(vehicleModel);
 
         LoadSelectList(
             selectedTransmission: vehicleModel.TransmissionId,
@@ -222,25 +178,7 @@ public class VehicleModelController : Controller
             selectedVehicleLine: vehicleModelToUpdate.VehicleLineId
         );
 
-        var vehicleModelViewModel = new VehicleModelViewModel
-        {
-            Id = vehicleModelToUpdate.Id,
-            Name = vehicleModelToUpdate.Name,
-            Price = vehicleModelToUpdate.Price,
-            Color = vehicleModelToUpdate.Color,
-            InteriorColor = vehicleModelToUpdate.InteriorColor,
-            CountryOfOrigin = vehicleModelToUpdate.CountryOfOrigin,
-            Year = vehicleModelToUpdate.Year,
-            NumberOfDoors = vehicleModelToUpdate.NumberOfDoors,
-            NumberOfSeats = vehicleModelToUpdate.NumberOfSeats,
-            Images = vehicleModelToUpdate.Images,
-            TransmissionName = vehicleModelToUpdate.Transmission?.Name,
-            EngineTypeName = vehicleModelToUpdate.EngineType?.Name,
-            VehicleLineName = vehicleModelToUpdate.VehicleLine?.Name,
-            TransmissionId = vehicleModelToUpdate.TransmissionId,
-            EngineTypeId = vehicleModelToUpdate.EngineTypeId,
-            VehicleLineId = vehicleModelToUpdate.VehicleLineId
-        };
+        var vehicleModelViewModel = _mapper.Map<VehicleModelViewModel>(vehicleModelToUpdate);
 
         return View(vehicleModelViewModel);
     }
