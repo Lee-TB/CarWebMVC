@@ -19,5 +19,6 @@ namespace CarWebMVC.Data
         public DbSet<VehicleLine> VehicleLines { get; set; }
         public DbSet<VehicleModel> VehicleModels { get; set; }
         public DbSet<Transmission> Transmission { get; set; } = default!;
+        public DbSet<VehicleImage> VehicleImages { get; set; }
     }
 }

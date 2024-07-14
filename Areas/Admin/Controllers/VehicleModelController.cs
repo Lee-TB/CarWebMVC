@@ -175,9 +175,11 @@ public class VehicleModelController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(
         int id,
-        [Bind("Id,Name,Price,Color,InteriorColor,CountryOfOrigin,Year,NumberOfDoors,NumberOfSeats,TransmissionId,EngineTypeId,VehicleLineId")] VehicleModel vehicleModel)
+        [Bind("Id,Name,Price,Color,InteriorColor,CountryOfOrigin,Year,NumberOfDoors,NumberOfSeats,TransmissionId,EngineTypeId,VehicleLineId")] VehicleModel vehicleModelToUpdate,
+        List<string> newImageUrls,
+        List<string> existingImageUrls)
     {
-        if (id != vehicleModel.Id)
+        if (id != vehicleModelToUpdate.Id)
         {
             return NotFound();
         }
@@ -186,12 +188,26 @@ public class VehicleModelController : Controller
         {
             try
             {
-                _context.Update(vehicleModel);
+                _context.Entry(vehicleModelToUpdate).Collection(v => v.Images).Load();
+                if (vehicleModelToUpdate.Images?.Count > 0)
+                {
+                    // Remove all images which not checked in the form from the database
+                    var imagesToRemove = vehicleModelToUpdate.Images.Where(image => !existingImageUrls.Contains(image.ImageUrl)).ToList();
+                    _context.VehicleImages.RemoveRange(imagesToRemove);
+
+                    // Add new images to Images tracking collection
+                    newImageUrls?.ForEach(imageUrl =>
+                    {
+                        vehicleModelToUpdate.Images.Add(new VehicleImage { ImageUrl = imageUrl });
+                    });
+                }
+
+                _context.Update(vehicleModelToUpdate);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VehicleModelExists(vehicleModel.Id))
+                if (!VehicleModelExists(vehicleModelToUpdate.Id))
                 {
                     return NotFound();
                 }
@@ -203,11 +219,32 @@ public class VehicleModelController : Controller
             return RedirectToAction(nameof(Index));
         }
         LoadSelectList(
-            selectedTransmission: vehicleModel.TransmissionId,
-            selectedEngineType: vehicleModel.EngineTypeId,
-            selectedVehicleLine: vehicleModel.VehicleLineId
+            selectedTransmission: vehicleModelToUpdate.TransmissionId,
+            selectedEngineType: vehicleModelToUpdate.EngineTypeId,
+            selectedVehicleLine: vehicleModelToUpdate.VehicleLineId
         );
-        return View(vehicleModel);
+
+        var vehicleModelViewModel = new VehicleModelViewModel
+        {
+            Id = vehicleModelToUpdate.Id,
+            Name = vehicleModelToUpdate.Name,
+            Price = vehicleModelToUpdate.Price,
+            Color = vehicleModelToUpdate.Color,
+            InteriorColor = vehicleModelToUpdate.InteriorColor,
+            CountryOfOrigin = vehicleModelToUpdate.CountryOfOrigin,
+            Year = vehicleModelToUpdate.Year,
+            NumberOfDoors = vehicleModelToUpdate.NumberOfDoors,
+            NumberOfSeats = vehicleModelToUpdate.NumberOfSeats,
+            Images = vehicleModelToUpdate.Images,
+            TransmissionName = vehicleModelToUpdate.Transmission?.Name,
+            EngineTypeName = vehicleModelToUpdate.EngineType?.Name,
+            VehicleLineName = vehicleModelToUpdate.VehicleLine?.Name,
+            TransmissionId = vehicleModelToUpdate.TransmissionId,
+            EngineTypeId = vehicleModelToUpdate.EngineTypeId,
+            VehicleLineId = vehicleModelToUpdate.VehicleLineId
+        };
+
+        return View(vehicleModelViewModel);
     }
 
     // POST: VehicleModel/Delete/5
