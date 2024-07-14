@@ -82,19 +82,7 @@
                             ảnh</em>
                     </p>
 
-                    <div id="ImagesPreview" class="mt-2 d-flex gap-3 flex-wrap">
-                        @if (ViewBag.ExistingImageList?.Count > 0)
-                        {
-                            foreach (var existingImage in ViewBag.ExistingImageList)
-                            {
-                                <label class="form-check-label position-relative" style="cursor: pointer;">
-                                    <input type="checkbox" class="position-absolute form-check-input mx-1" name="ImageList"
-                                        value="@existingImage" checked />
-                                    <img src="@existingImage" class="border" style="max-width: 200px; max-height: 100px;" />
-                                </label>
-                            }
-                        }
-                    </div>
+                    <div id="ImagesPreview" class="mt-2 d-flex gap-3 flex-wrap"></div>
 
                     <button type="button" id="upload_widget" class="btn btn-primary btn-sm d-block my-2">Tải ảnh
                         lên</button>
@@ -119,6 +107,53 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        await Html.RenderPartialAsync("_CloudinaryScriptsPartial");
     }
+    <script src="https://upload-widget.cloudinary.com/latest/global/all.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', async () =>
+        {
+            const response = await fetch('/api/cloudinary/generate-signature');
+            const data = await response.json();
+
+            const options = {
+                cloudName: data.cloudName,
+                apiKey: data.apiKey,
+                uploadSignatureTimestamp: data.timestamp,
+                uploadSignature: data.signature,
+                uploadPreset: data.uploadPreset,
+            }
+
+            const processResults = (error, result) =>
+            {
+                if (!error && result && result.event === 'success')
+                {
+                    document.getElementById("ImagesPreview").innerHTML += `
+                                                    <label class="form-check-label position-relative" style="cursor: pointer;">
+                                                        <input 
+                                                        type="checkbox" 
+                                                        class="position-absolute form-check-input mx-1" 
+                                                        name="newImageUrls"
+                                                        value="${result.info.secure_url}"
+                                                        checked />
+                                                        <img 
+                                                        src="${result.info.secure_url}"                
+                                                        class="border" style="max-width: 200px; max-height: 100px;" />
+                                                    </label>
+                                                `;
+
+                    var str = JSON.stringify(result, null, 4);
+                    document.getElementById("uwdata").innerHTML += str;
+                }
+            }
+
+            const widget = window.cloudinary.createUploadWidget(
+                options,
+                processResults
+            )
+
+            document
+                .getElementById('upload_widget')
+                .addEventListener('click', () => widget.open(), false)
+        });                    
+    </script>
 }

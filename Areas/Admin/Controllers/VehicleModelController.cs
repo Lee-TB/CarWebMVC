@@ -99,14 +99,13 @@ public class VehicleModelController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Name,Price,Color,InteriorColor,CountryOfOrigin,Year,NumberOfDoors,NumberOfSeats,TransmissionId,EngineTypeId,VehicleLineId")] VehicleModel vehicleModel, List<string>? ImageList)
+    public async Task<IActionResult> Create(
+        [Bind("Id,Name,Price,Color,InteriorColor,CountryOfOrigin,Year,NumberOfDoors,NumberOfSeats,TransmissionId,EngineTypeId,VehicleLineId")] VehicleModel vehicleModel, 
+        List<string> newImageUrls)
     {
         if (ModelState.IsValid)
-        {
-            ImageList.ForEach(image =>
-            {
-                vehicleModel.Images.Add(new VehicleImage { ImageUrl = image });
-            });
+        {            
+            vehicleModel.Images = newImageUrls.Select(image => new VehicleImage { ImageUrl = image }).ToList();            
             _context.Add(vehicleModel);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -116,7 +115,6 @@ public class VehicleModelController : Controller
             selectedEngineType: vehicleModel.EngineTypeId,
             selectedVehicleLine: vehicleModel.VehicleLineId
         );
-        ViewBag.ExistingImageList = ImageList;
         return View(vehicleModel);
     }
 
