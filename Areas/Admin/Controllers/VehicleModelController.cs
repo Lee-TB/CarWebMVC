@@ -1,33 +1,31 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CarWebMVC.Data;
 using CarWebMVC.Models;
 using CarWebMVC.Models.ViewModels;
 using AutoMapper;
+using CarWebMVC.Repositories;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
 public class VehicleModelController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public VehicleModelController(AppDbContext context, IMapper mapper)
+    public VehicleModelController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
     // GET: VehicleModel
     public async Task<IActionResult> Index()
     {
-        var vehicleModels = await _context.VehicleModels
-            .Include(v => v.EngineType)
-            .Include(v => v.Transmission)
-            .Include(v => v.VehicleLine)
-            .Include(v => v.Images).ToListAsync();
+        var vehicleModels = await _unitOfWork.VehicleModelRepository.GetAsync(
+            includeProperties: "EngineType,Transmission,VehicleLine,Images"
+        );
 
         var vehicleModelViewModelList = vehicleModels
             .Select(vehicleModel => _mapper.Map<VehicleModelViewModel>(vehicleModel))
@@ -44,27 +42,21 @@ public class VehicleModelController : Controller
             return NotFound();
         }
 
-        var vehicleModel = await _context.VehicleModels
-            .Include(v => v.EngineType)
-            .Include(v => v.Transmission)
-            .Include(v => v.VehicleLine)
-            .Include(v => v.Images)
-            .FirstOrDefaultAsync(m => m.Id == id);
-
+        var vehicleModel = await _unitOfWork.VehicleModelRepository
+            .GetByIdAsync(id, includeProperties: "EngineType,Transmission,VehicleLine,Images");
         if (vehicleModel == null)
         {
             return NotFound();
         }
 
         var vehicleModelViewModel = _mapper.Map<VehicleModelViewModel>(vehicleModel);
-
         return View(vehicleModelViewModel);
     }
 
     // GET: VehicleModel/Create
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        LoadSelectList();
+        await LoadSelectListAsync();
         return View();
     }
 
@@ -80,11 +72,11 @@ public class VehicleModelController : Controller
         if (ModelState.IsValid)
         {
             vehicleModel.Images = newImageUrls.Select(image => new VehicleImage { ImageUrl = image }).ToList();
-            _context.Add(vehicleModel);
-            await _context.SaveChangesAsync();
+            _unitOfWork.VehicleModelRepository.Add(vehicleModel);
+            await _unitOfWork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        LoadSelectList(
+        await LoadSelectListAsync(
             selectedTransmission: vehicleModel.TransmissionId,
             selectedEngineType: vehicleModel.EngineTypeId,
             selectedVehicleLine: vehicleModel.VehicleLineId
@@ -100,12 +92,8 @@ public class VehicleModelController : Controller
             return NotFound();
         }
 
-        var vehicleModel = await _context.VehicleModels
-            .Include(v => v.EngineType)
-            .Include(v => v.Transmission)
-            .Include(v => v.VehicleLine)
-            .Include(v => v.Images)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var vehicleModel = await _unitOfWork.VehicleModelRepository
+            .GetByIdAsync(id, includeProperties: "EngineType,Transmission,VehicleLine,Images");
 
         if (vehicleModel == null)
         {
@@ -114,7 +102,7 @@ public class VehicleModelController : Controller
 
         var vehicleModelViewModel = _mapper.Map<VehicleModelViewModel>(vehicleModel);
 
-        LoadSelectList(
+        await LoadSelectListAsync(
             selectedTransmission: vehicleModel.TransmissionId,
             selectedEngineType: vehicleModel.EngineTypeId,
             selectedVehicleLine: vehicleModel.VehicleLineId
@@ -142,12 +130,12 @@ public class VehicleModelController : Controller
         {
             try
             {
-                _context.Entry(vehicleModelToUpdate).Collection(v => v.Images).Load();
+                await _unitOfWork.VehicleModelRepository.LoadCollectionAsync(vehicleModelToUpdate, "Images");
                 if (vehicleModelToUpdate.Images?.Count > 0)
                 {
                     // Remove all images which not checked in the form from the database
                     var imagesToRemove = vehicleModelToUpdate.Images.Where(image => !existingImageUrls.Contains(image.ImageUrl)).ToList();
-                    _context.VehicleImages.RemoveRange(imagesToRemove);
+                    _unitOfWork.VehicleImageRepository.RemoveRange(imagesToRemove);
 
                     // Add new images to Images tracking collection
                     newImageUrls?.ForEach(imageUrl =>
@@ -156,12 +144,12 @@ public class VehicleModelController : Controller
                     });
                 }
 
-                _context.Update(vehicleModelToUpdate);
-                await _context.SaveChangesAsync();
+                _unitOfWork.VehicleModelRepository.Update(vehicleModelToUpdate);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VehicleModelExists(vehicleModelToUpdate.Id))
+                if (await _unitOfWork.VehicleModelRepository.ExistsAsync(vehicleModelToUpdate.Id))
                 {
                     return NotFound();
                 }
@@ -172,7 +160,7 @@ public class VehicleModelController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        LoadSelectList(
+        await LoadSelectListAsync(
             selectedTransmission: vehicleModelToUpdate.TransmissionId,
             selectedEngineType: vehicleModelToUpdate.EngineTypeId,
             selectedVehicleLine: vehicleModelToUpdate.VehicleLineId
@@ -188,25 +176,20 @@ public class VehicleModelController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        var vehicleModel = await _context.VehicleModels.FindAsync(id);
+        var vehicleModel = await _unitOfWork.VehicleModelRepository.GetByIdAsync(id);
         if (vehicleModel != null)
         {
-            _context.VehicleModels.Remove(vehicleModel);
+            _unitOfWork.VehicleModelRepository.Remove(vehicleModel);
         }
 
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool VehicleModelExists(int id)
+    private async Task LoadSelectListAsync(object? selectedTransmission = null, object? selectedEngineType = null, object? selectedVehicleLine = null)
     {
-        return _context.VehicleModels.Any(e => e.Id == id);
-    }
-
-    private void LoadSelectList(object? selectedTransmission = null, object? selectedEngineType = null, object? selectedVehicleLine = null)
-    {
-        ViewBag.TransmissionSelectItems = new SelectList(_context.Transmission, "Id", "Name", selectedTransmission);
-        ViewBag.EngineTypeSelectItems = new SelectList(_context.EngineTypes, "Id", "Name", selectedEngineType);
-        ViewBag.VehicleLineSelectItems = new SelectList(_context.VehicleLines, "Id", "Name", selectedVehicleLine);
+        ViewBag.TransmissionSelectItems = new SelectList(await _unitOfWork.TransmissionRepository.GetAsync(), "Id", "Name", selectedTransmission);
+        ViewBag.EngineTypeSelectItems = new SelectList(await _unitOfWork.EngineTypeRepository.GetAsync(), "Id", "Name", selectedEngineType);
+        ViewBag.VehicleLineSelectItems = new SelectList(await _unitOfWork.VehicleLineRepository.GetAsync(), "Id", "Name", selectedVehicleLine);
     }
 }

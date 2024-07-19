@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using CarWebMVC.Services;
 using CarWebMVC.Models;
 using CarWebMVC.Mapper;
+using CarWebMVC.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -22,6 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddControllersWithViews();
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
     builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
     builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
