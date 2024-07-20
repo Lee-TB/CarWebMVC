@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CarWebMVC.Data;
-using CarWebMVC.Models;
+using CarWebMVC.Models.Domain;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 

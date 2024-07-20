@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CarWebMVC.Models;
+namespace CarWebMVC.Models.Domain;
 
 public class VehicleImage
 {

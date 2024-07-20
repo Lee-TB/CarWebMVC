@@ -1,6 +1,6 @@
-namespace CarWebMVC.Models;
+namespace CarWebMVC.Models.Domain;
 
 public class TechicalSpecification
 {
-    
+
 }

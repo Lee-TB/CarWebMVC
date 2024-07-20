@@ -1,5 +1,5 @@
 using CarWebMVC.Data;
-using CarWebMVC.Models;
+using CarWebMVC.Models.Domain;
 
 namespace CarWebMVC.Repositories;
 
@@ -15,6 +15,12 @@ public class UnitOfWork : IUnitOfWork
 
     public IGenericRepository<VehicleLine> VehicleLineRepository { get; }
 
+    public IGenericRepository<Manufacturer> ManufacturerRepository { get; }
+
+    public IGenericRepository<VehicleType> VehicleTypeRepository { get; }
+
+    public IGenericRepository<Customer> CustomerRepository { get; }
+
     public UnitOfWork(AppDbContext dbContext)
     {
         context = dbContext;
@@ -23,6 +29,9 @@ public class UnitOfWork : IUnitOfWork
         TransmissionRepository = new GenericRepository<Transmission>(dbContext);
         EngineTypeRepository = new GenericRepository<EngineType>(dbContext);
         VehicleLineRepository = new GenericRepository<VehicleLine>(dbContext);
+        ManufacturerRepository = new GenericRepository<Manufacturer>(dbContext);
+        VehicleTypeRepository = new GenericRepository<VehicleType>(dbContext);
+        CustomerRepository = new GenericRepository<Customer>(dbContext);
     }
 
     public async Task SaveChangesAsync()

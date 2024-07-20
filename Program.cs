@@ -10,7 +10,10 @@ using CarWebMVC.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found.")));
+    {
+        var connectionString = builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found.");
+        options.UseSqlServer(connectionString);
+    });
 
     builder.Services
         .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)

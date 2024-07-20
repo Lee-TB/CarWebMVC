@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace CarWebMVC.Models;
+namespace CarWebMVC.Models.Domain;
 
 public class EngineType
 {

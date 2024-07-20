@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CarWebMVC.Data;
-using CarWebMVC.Models;
+using CarWebMVC.Models.Domain;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 

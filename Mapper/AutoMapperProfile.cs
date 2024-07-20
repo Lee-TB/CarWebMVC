@@ -1,5 +1,5 @@
 using AutoMapper;
-using CarWebMVC.Models;
+using CarWebMVC.Models.Domain;
 using CarWebMVC.Models.ViewModels;
 
 namespace CarWebMVC.Mapper;

@@ -1,4 +1,4 @@
-using CarWebMVC.Models;
+using CarWebMVC.Models.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

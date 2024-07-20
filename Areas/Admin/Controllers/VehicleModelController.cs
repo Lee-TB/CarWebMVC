@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CarWebMVC.Models;
+using CarWebMVC.Models.Domain;
 using CarWebMVC.Models.ViewModels;
 using AutoMapper;
 using CarWebMVC.Repositories;

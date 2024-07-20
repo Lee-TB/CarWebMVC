@@ -35,7 +35,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
             query = orderBy(query);
         }
 
-        return await query.ToListAsync();
+        return await query.AsNoTracking().ToListAsync();
     }
 
     public virtual async Task<TEntity?> GetByIdAsync(object id, string includeProperties = "")
@@ -49,7 +49,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 
         var lambda = GetComparedKeyLambdaExpression(id);
 
-        return await query.FirstOrDefaultAsync(lambda);
+        return await query.AsNoTracking().FirstOrDefaultAsync(lambda);
     }
 
     public virtual void Add(TEntity entity)
