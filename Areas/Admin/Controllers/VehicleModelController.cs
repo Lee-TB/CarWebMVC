@@ -149,7 +149,7 @@ public class VehicleModelController : Controller
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (await _unitOfWork.VehicleModelRepository.ExistsAsync(vehicleModelToUpdate.Id))
+                if (!(await _unitOfWork.VehicleModelRepository.ExistsAsync(vehicleModelToUpdate.Id)))
                 {
                     return NotFound();
                 }

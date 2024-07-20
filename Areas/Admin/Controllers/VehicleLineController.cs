@@ -1,26 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CarWebMVC.Data;
 using CarWebMVC.Models.Domain;
+using CarWebMVC.Repositories;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
 public class VehicleLineController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public VehicleLineController(AppDbContext context)
+    public VehicleLineController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     // GET: VehicleLine
     public async Task<IActionResult> Index()
     {
-        var appDbContext = _context.VehicleLines.Include(v => v.Manufacturer).Include(v => v.VehicleType);
-        return View(await appDbContext.ToListAsync());
+        var vehicleLines = await _unitOfWork.VehicleLineRepository.GetAsync(includeProperties: "Manufacturer,VehicleType");
+        return View(vehicleLines);
     }
 
     // GET: VehicleLine/Details/5
@@ -31,10 +31,9 @@ public class VehicleLineController : Controller
             return NotFound();
         }
 
-        var vehicleLine = await _context.VehicleLines
-            .Include(v => v.Manufacturer)
-            .Include(v => v.VehicleType)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var vehicleLine = await _unitOfWork.VehicleLineRepository
+            .GetByIdAsync(id, includeProperties: "Manufacturer,VehicleType");
+
         if (vehicleLine == null)
         {
             return NotFound();
@@ -44,9 +43,9 @@ public class VehicleLineController : Controller
     }
 
     // GET: VehicleLine/Create
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        LoadSelectItems();
+        await LoadSelectItemsAsync();
         return View();
     }
 
@@ -57,14 +56,13 @@ public class VehicleLineController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,Name,ManufacturerId,VehicleTypeId")] VehicleLine vehicleLine)
     {
-        PrintModelStateErrors();
         if (ModelState.IsValid)
         {
-            _context.Add(vehicleLine);
-            await _context.SaveChangesAsync();
+            _unitOfWork.VehicleLineRepository.Add(vehicleLine);
+            await _unitOfWork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        LoadSelectItems(vehicleLine.ManufacturerId, vehicleLine.VehicleTypeId);
+        await LoadSelectItemsAsync(vehicleLine.ManufacturerId, vehicleLine.VehicleTypeId);
         return View(vehicleLine);
     }
 
@@ -76,12 +74,12 @@ public class VehicleLineController : Controller
             return NotFound();
         }
 
-        var vehicleLine = await _context.VehicleLines.FindAsync(id);
+        var vehicleLine = await _unitOfWork.VehicleLineRepository.GetByIdAsync(id);
         if (vehicleLine == null)
         {
             return NotFound();
         }
-        LoadSelectItems(vehicleLine.ManufacturerId, vehicleLine.VehicleTypeId);
+        await LoadSelectItemsAsync(vehicleLine.ManufacturerId, vehicleLine.VehicleTypeId);
         return View(vehicleLine);
     }
 
@@ -101,12 +99,12 @@ public class VehicleLineController : Controller
         {
             try
             {
-                _context.Update(vehicleLine);
-                await _context.SaveChangesAsync();
+                _unitOfWork.VehicleLineRepository.Update(vehicleLine);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VehicleLineExists(vehicleLine.Id))
+                if (!(await VehicleLineExistsAsync(vehicleLine.Id)))
                 {
                     return NotFound();
                 }
@@ -117,7 +115,7 @@ public class VehicleLineController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        LoadSelectItems(vehicleLine.ManufacturerId, vehicleLine.VehicleTypeId);
+        await LoadSelectItemsAsync(vehicleLine.ManufacturerId, vehicleLine.VehicleTypeId);
         return View(vehicleLine);
     }
 
@@ -129,10 +127,8 @@ public class VehicleLineController : Controller
             return NotFound();
         }
 
-        var vehicleLine = await _context.VehicleLines
-            .Include(v => v.Manufacturer)
-            .Include(v => v.VehicleType)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var vehicleLine = await _unitOfWork.VehicleLineRepository
+            .GetByIdAsync(id, includeProperties: "Manufacturer,VehicleType");
         if (vehicleLine == null)
         {
             return NotFound();
@@ -146,35 +142,24 @@ public class VehicleLineController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var vehicleLine = await _context.VehicleLines.FindAsync(id);
+        var vehicleLine = await _unitOfWork.VehicleLineRepository.GetByIdAsync(id);
         if (vehicleLine != null)
         {
-            _context.VehicleLines.Remove(vehicleLine);
+            _unitOfWork.VehicleLineRepository.Remove(vehicleLine);
         }
 
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool VehicleLineExists(int id)
+    private async Task<bool> VehicleLineExistsAsync(int id)
     {
-        return _context.VehicleLines.Any(e => e.Id == id);
+        return await _unitOfWork.VehicleLineRepository.ExistsAsync(id);
     }
 
-    private void LoadSelectItems(object? ManufacturerSelected = null, object? VehicleTypeSelected = null)
+    private async Task LoadSelectItemsAsync(object? ManufacturerSelected = null, object? VehicleTypeSelected = null)
     {
-        ViewData["ManufacturerSelectItems"] = new SelectList(_context.Manufacturers, "Id", "Name", ManufacturerSelected);
-        ViewData["VehicleTypeSelectItems"] = new SelectList(_context.VehicleTypes, "Id", "Name", VehicleTypeSelected);
-    }
-
-    private void PrintModelStateErrors()
-    {
-        foreach (var modelState in ModelState.Values)
-        {
-            foreach (var modelError in modelState.Errors)
-            {
-                Console.WriteLine(modelError.ErrorMessage);
-            }
-        }
+        ViewData["ManufacturerSelectItems"] = new SelectList(await _unitOfWork.ManufacturerRepository.GetAsync(), "Id", "Name", ManufacturerSelected);
+        ViewData["VehicleTypeSelectItems"] = new SelectList(await _unitOfWork.VehicleTypeRepository.GetAsync(), "Id", "Name", VehicleTypeSelected);
     }
 }

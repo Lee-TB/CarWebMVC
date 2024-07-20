@@ -1,24 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CarWebMVC.Data;
 using CarWebMVC.Models.Domain;
+using CarWebMVC.Repositories;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
 public class ManufacturerController : Controller
 {
-    private readonly AppDbContext _context;
-
-    public ManufacturerController(AppDbContext context)
+    private readonly IUnitOfWork _unitOfWork;
+    public ManufacturerController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     // GET: Manufacturer
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Manufacturers.ToListAsync());
+        var manufacturers = await _unitOfWork.ManufacturerRepository.GetAsync();
+        return View(manufacturers);
     }
 
     // GET: Manufacturer/Details/5
@@ -29,8 +29,7 @@ public class ManufacturerController : Controller
             return NotFound();
         }
 
-        var manufacturer = await _context.Manufacturers
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var manufacturer = await _unitOfWork.ManufacturerRepository.GetByIdAsync(id);
         if (manufacturer == null)
         {
             return NotFound();
@@ -54,8 +53,8 @@ public class ManufacturerController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(manufacturer);
-            await _context.SaveChangesAsync();
+            _unitOfWork.ManufacturerRepository.Add(manufacturer);
+            await _unitOfWork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         return View(manufacturer);
@@ -69,7 +68,7 @@ public class ManufacturerController : Controller
             return NotFound();
         }
 
-        var manufacturer = await _context.Manufacturers.FindAsync(id);
+        var manufacturer = await _unitOfWork.ManufacturerRepository.GetByIdAsync(id);
         if (manufacturer == null)
         {
             return NotFound();
@@ -93,12 +92,12 @@ public class ManufacturerController : Controller
         {
             try
             {
-                _context.Update(manufacturer);
-                await _context.SaveChangesAsync();
+                _unitOfWork.ManufacturerRepository.Update(manufacturer);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ManufacturerExists(manufacturer.Id))
+                if (!(await ManufacturerExists(manufacturer.Id)))
                 {
                     return NotFound();
                 }
@@ -120,8 +119,7 @@ public class ManufacturerController : Controller
             return NotFound();
         }
 
-        var manufacturer = await _context.Manufacturers
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var manufacturer = await _unitOfWork.ManufacturerRepository.GetByIdAsync(id);
         if (manufacturer == null)
         {
             return NotFound();
@@ -135,18 +133,18 @@ public class ManufacturerController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var manufacturer = await _context.Manufacturers.FindAsync(id);
+        var manufacturer = await _unitOfWork.ManufacturerRepository.GetByIdAsync(id);
         if (manufacturer != null)
         {
-            _context.Manufacturers.Remove(manufacturer);
+            _unitOfWork.ManufacturerRepository.Remove(manufacturer);
         }
 
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool ManufacturerExists(int id)
+    private async Task<bool> ManufacturerExists(int id)
     {
-        return _context.Manufacturers.Any(e => e.Id == id);
+        return await _unitOfWork.ManufacturerRepository.ExistsAsync(id);
     }
 }

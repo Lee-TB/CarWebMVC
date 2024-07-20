@@ -2,23 +2,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CarWebMVC.Data;
 using CarWebMVC.Models.Domain;
+using CarWebMVC.Repositories;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
 public class EngineTypeController : Controller
 {
-    private readonly AppDbContext _context;
-
-    public EngineTypeController(AppDbContext context)
+    private readonly IUnitOfWork _unitOfWork;
+    public EngineTypeController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     // GET: EngineType
     public async Task<IActionResult> Index()
     {
-        return View(await _context.EngineTypes.ToListAsync());
+        var engineTypes = await _unitOfWork.EngineTypeRepository.GetAsync();
+        return View(engineTypes);
     }
 
     // GET: EngineType/Details/5
@@ -29,8 +30,7 @@ public class EngineTypeController : Controller
             return NotFound();
         }
 
-        var engineType = await _context.EngineTypes
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var engineType = await _unitOfWork.EngineTypeRepository.GetByIdAsync(id);
         if (engineType == null)
         {
             return NotFound();
@@ -54,8 +54,8 @@ public class EngineTypeController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(engineType);
-            await _context.SaveChangesAsync();
+            _unitOfWork.EngineTypeRepository.Add(engineType);
+            await _unitOfWork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         return View(engineType);
@@ -69,7 +69,7 @@ public class EngineTypeController : Controller
             return NotFound();
         }
 
-        var engineType = await _context.EngineTypes.FindAsync(id);
+        var engineType = await _unitOfWork.EngineTypeRepository.GetByIdAsync(id);
         if (engineType == null)
         {
             return NotFound();
@@ -93,12 +93,12 @@ public class EngineTypeController : Controller
         {
             try
             {
-                _context.Update(engineType);
-                await _context.SaveChangesAsync();
+                _unitOfWork.EngineTypeRepository.Update(engineType);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EngineTypeExists(engineType.Id))
+                if (!(await EngineTypeExists(engineType.Id)))
                 {
                     return NotFound();
                 }
@@ -120,8 +120,7 @@ public class EngineTypeController : Controller
             return NotFound();
         }
 
-        var engineType = await _context.EngineTypes
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var engineType = await _unitOfWork.EngineTypeRepository.GetByIdAsync(id);
         if (engineType == null)
         {
             return NotFound();
@@ -135,18 +134,18 @@ public class EngineTypeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var engineType = await _context.EngineTypes.FindAsync(id);
+        var engineType = await _unitOfWork.EngineTypeRepository.GetByIdAsync(id);
         if (engineType != null)
         {
-            _context.EngineTypes.Remove(engineType);
+            _unitOfWork.EngineTypeRepository.Remove(engineType);
         }
 
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool EngineTypeExists(int id)
+    private async Task<bool> EngineTypeExists(int id)
     {
-        return _context.EngineTypes.Any(e => e.Id == id);
+        return await _unitOfWork.EngineTypeRepository.ExistsAsync(id);
     }
 }

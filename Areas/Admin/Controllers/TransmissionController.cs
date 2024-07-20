@@ -1,24 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CarWebMVC.Data;
 using CarWebMVC.Models.Domain;
+using CarWebMVC.Repositories;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
 public class TransmissionController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public TransmissionController(AppDbContext context)
+    public TransmissionController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     // GET: Transmission
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Transmission.ToListAsync());
+        var transmissions = await _unitOfWork.TransmissionRepository.GetAsync();
+        return View(transmissions);
     }
 
     // GET: Transmission/Details/5
@@ -29,8 +30,7 @@ public class TransmissionController : Controller
             return NotFound();
         }
 
-        var transmission = await _context.Transmission
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var transmission = await _unitOfWork.TransmissionRepository.GetByIdAsync(id);
         if (transmission == null)
         {
             return NotFound();
@@ -54,8 +54,8 @@ public class TransmissionController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(transmission);
-            await _context.SaveChangesAsync();
+            _unitOfWork.TransmissionRepository.Add(transmission);
+            await _unitOfWork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         return View(transmission);
@@ -69,7 +69,7 @@ public class TransmissionController : Controller
             return NotFound();
         }
 
-        var transmission = await _context.Transmission.FindAsync(id);
+        var transmission = await _unitOfWork.TransmissionRepository.GetByIdAsync(id);
         if (transmission == null)
         {
             return NotFound();
@@ -93,12 +93,12 @@ public class TransmissionController : Controller
         {
             try
             {
-                _context.Update(transmission);
-                await _context.SaveChangesAsync();
+                _unitOfWork.TransmissionRepository.Update(transmission);
+                await _unitOfWork.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TransmissionExists(transmission.Id))
+                if (!(await TransmissionExists(transmission.Id)))
                 {
                     return NotFound();
                 }
@@ -120,8 +120,8 @@ public class TransmissionController : Controller
             return NotFound();
         }
 
-        var transmission = await _context.Transmission
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var transmission = await _unitOfWork.TransmissionRepository.GetByIdAsync(id);
+
         if (transmission == null)
         {
             return NotFound();
@@ -135,18 +135,18 @@ public class TransmissionController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var transmission = await _context.Transmission.FindAsync(id);
+        var transmission = await _unitOfWork.TransmissionRepository.GetByIdAsync(id);
         if (transmission != null)
         {
-            _context.Transmission.Remove(transmission);
+            _unitOfWork.TransmissionRepository.Remove(transmission);
         }
 
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool TransmissionExists(int id)
+    private async Task<bool> TransmissionExists(int id)
     {
-        return _context.Transmission.Any(e => e.Id == id);
+        return await _unitOfWork.TransmissionRepository.ExistsAsync(id);
     }
 }
