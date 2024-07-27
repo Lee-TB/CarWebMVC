@@ -5,6 +5,7 @@ using CarWebMVC.Models.Domain;
 using CarWebMVC.Models.ViewModels;
 using AutoMapper;
 using CarWebMVC.Repositories;
+using CarWebMVC.Models;
 
 namespace CarWebMVC.Areas.Admin.Controllers;
 
@@ -21,17 +22,26 @@ public class VehicleModelController : Controller
     }
 
     // GET: VehicleModel
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? search, int pageIndex = 1, int pageSize = 10)
     {
-        var vehicleModels = await _unitOfWork.VehicleModelRepository.GetAsync(
-            includeProperties: "EngineType,Transmission,VehicleLine,Images"
+        ViewBag.currentSearch = search;
+        ViewBag.currentPageSize = pageSize;
+
+        PaginatedList<VehicleModel>? vehicleModels = await _unitOfWork.VehicleModelRepository.GetPaginatedAsync(
+            includeProperties: "EngineType,Transmission,VehicleLine,Images",
+            pageIndex: pageIndex,
+            pageSize: pageSize
         );
 
-        var vehicleModelViewModelList = vehicleModels
-            .Select(vehicleModel => _mapper.Map<VehicleModelViewModel>(vehicleModel))
-            .ToList();
+        var viewModels = vehicleModels
+            .Select(vehicleModel => _mapper.Map<VehicleModelViewModel>(vehicleModel)).ToList();
 
-        return View(vehicleModelViewModelList);
+        var vehicleModelViewModelPaginatedList = new PaginatedList<VehicleModelViewModel>(viewModels,
+            vehicleModels.PageIndex,
+            vehicleModels.TotalPages);
+
+
+        return View(vehicleModelViewModelPaginatedList);
     }
 
     // GET: VehicleModel/Details/5

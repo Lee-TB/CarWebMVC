@@ -1,4 +1,4 @@
-@model IEnumerable<CarWebMVC.Models.ViewModels.VehicleModelViewModel>
+@model PaginatedList<CarWebMVC.Models.ViewModels.VehicleModelViewModel>
 
 @{
     ViewData["Title"] = "Mẫu xe";
@@ -8,42 +8,58 @@
 <div class="w-100">
     <h1>Mẫu xe</h1>
 
-    <p>
-        <a asp-action="Create">Thêm mới</a>
-    </p>
-    <div class="table-responsive">        
+    <div class="d-flex align-items-center justify-content-between gap-2">
+        <div>
+            <p>
+                <a asp-action="Create">Thêm mới</a>
+            </p>
+            <form asp-action="Index" method="get">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search">
+                    <button type="submit" class="btn btn-sm btn-primary">Tìm</button>
+                </div>
+                <input type="hidden" name="pageSize" value="@ViewBag.currentPageSize">
+            </form>
+        </div>
+        <form asp-action="Index" method="get">
+            <input type="hidden" name="search" value="@ViewBag.currentSearch">
+            <input type="text" class="form-control" style="width: 90px;" min="1" max="20" minlength="1" maxlength="2"
+                name="pageSize" placeholder="Số dòng">
+        </form>
+    </div>
+    <div class="table-responsive">
         <table class="table table-striped d-table">
             <thead>
                 <tr>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.Name)
+                        @Html.DisplayNameFor(model => model[0].Name)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.Thumbnail)
+                        @Html.DisplayNameFor(model => model[0].Thumbnail)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.Price)
+                        @Html.DisplayNameFor(model => model[0].Price)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.VehicleLineName)
+                        @Html.DisplayNameFor(model => model[0].VehicleLineName)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.TransmissionName)
+                        @Html.DisplayNameFor(model => model[0].TransmissionName)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.EngineTypeName)
+                        @Html.DisplayNameFor(model => model[0].EngineTypeName)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.Color)
+                        @Html.DisplayNameFor(model => model[0].Color)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.InteriorColor)
+                        @Html.DisplayNameFor(model => model[0].InteriorColor)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.CountryOfOrigin)
+                        @Html.DisplayNameFor(model => model[0].CountryOfOrigin)
                     </th>
                     <th style="min-width: 100px;">
-                        @Html.DisplayNameFor(model => model.Year)
+                        @Html.DisplayNameFor(model => model[0].Year)
                     </th>
                     <th style="min-width: 100px;">
                         Thao tác
@@ -86,7 +102,7 @@
                         </td>
                         <td class="d-grid gap-1">
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Chỉnh sửa</a>
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Chi tiết</a>                            
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Chi tiết</a>
                         </td>
                     </tr>
                 }
@@ -94,3 +110,57 @@
         </table>
     </div>
 </div>
+@if (Model.TotalPages > 1)
+{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+
+
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item @prevDisabled">
+                    <a asp-action="Index" asp-route-search="@ViewBag.currentSearch"
+                        asp-route-pageSize="@ViewBag.currentPageSize" asp-route-search="@ViewBag.currentSearch"
+                        class="page-link" aria-label="First" asp-route-pageIndex="@(1)">
+                        <span aria-hidden=" true">&lt;&lt;</span>
+                    </a>
+                </li>
+                <li class="page-item @prevDisabled">
+                    <a asp-action="Index" asp-route-search="@ViewBag.currentSearch"
+                        asp-route-pageSize="@ViewBag.currentPageSize" asp-route-search="@ViewBag.currentSearch"
+                        class="page-link" aria-label="Previous" asp-route-pageIndex="@(Model.PageIndex - 1)">
+                        <span aria-hidden=" true">&lt;</span>
+                    </a>
+                </li>
+                @for (int pageIndex = 1; pageIndex <= Model.TotalPages; pageIndex++)
+                {
+                    <li class="page-item @(pageIndex == Model.PageIndex ? "disabled" : "")">
+                        <a asp-action="Index" asp-route-search="@ViewBag.currentSearch"
+                            asp-route-pageSize="@ViewBag.currentPageSize" asp-route-search="@ViewBag.currentSearch"
+                            class="page-link" asp-route-pageIndex="@pageIndex">
+                            @pageIndex
+                        </a>
+                    </li>
+                }
+                <li class=" page-item @nextDisabled">
+                    <a asp-action="Index" asp-route-search="@ViewBag.currentSearch"
+                        asp-route-pageSize="@ViewBag.currentPageSize" asp-route-search="@ViewBag.currentSearch"
+                        class="page-link" aria-label="Next" asp-route-pageIndex="@(Model.PageIndex + 1)">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+                <li class=" page-item @nextDisabled">
+                    <a asp-action="Index" asp-route-search="@ViewBag.currentSearch"
+                        asp-route-pageSize="@ViewBag.currentPageSize" asp-route-search="@ViewBag.currentSearch"
+                        class="page-link" aria-label="Last" asp-route-pageIndex="@(Model.TotalPages)">
+                        <span aria-hidden="true">&gt;&gt;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <p>
+        Trang @(Model.PageIndex)/@Model.TotalPages
+    </p>
+}

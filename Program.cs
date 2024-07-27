@@ -14,6 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
         var connectionString = builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found.");
         options.UseSqlServer(connectionString);
     });
+    builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+    builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
     builder.Services
         .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -25,8 +28,6 @@ var builder = WebApplication.CreateBuilder(args);
     });
 
     builder.Services.AddControllersWithViews();
-    builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
     builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
     builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
