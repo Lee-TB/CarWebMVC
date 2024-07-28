@@ -17,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
     builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+    builder.Services.AddSingleton<ILuceneWriter, LuceneWriter>();
+    builder.Services.AddScoped(typeof(ILuceneService<>), typeof(LuceneService<>));
 
     builder.Services
         .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
