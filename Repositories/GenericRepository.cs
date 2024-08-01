@@ -13,11 +13,16 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         this.context = context;
     }
+    public async Task<IEnumerable<TEntity>> GetAsync()
+    {
+        return await context.Set<TEntity>().AsNoTracking().ToListAsync();
+    }
 
     public virtual async Task<IEnumerable<TEntity>> GetAsync(
+        string[]? includeProperties = null,
         Expression<Func<TEntity, bool>>? filter = null,
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        string includeProperties = "")
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null
+        )
     {
         IQueryable<TEntity> query = context.Set<TEntity>().AsSplitQuery();
 
@@ -26,9 +31,41 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
             query = query.Where(filter);
         }
 
-        foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+        if (includeProperties != null)
         {
-            query = query.Include(includeProperty);
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+
+        if (orderBy != null)
+        {
+            query = orderBy(query);
+        }
+
+        return await query.AsNoTracking().ToListAsync();
+    }
+
+    public virtual async Task<IEnumerable<TEntity>> GetAsync(
+        string? includeProperties = null,
+        Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null
+        )
+    {
+        IQueryable<TEntity> query = context.Set<TEntity>().AsSplitQuery();
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        if (includeProperties != null)
+        {
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
         }
 
         if (orderBy != null)

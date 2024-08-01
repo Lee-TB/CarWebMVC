@@ -13,5 +13,7 @@ public class AutoMapperProfile : Profile
 
         CreateMap<VehicleModel, VehicleModelLuceneDTO>().ReverseMap();
 
+        CreateMap<VehicleModel, ProductCardViewModel>().ForMember(des => des.Thumbnail, opt => opt.MapFrom(source => source.Images.FirstOrDefault().ImageUrl));
+
     }
 }

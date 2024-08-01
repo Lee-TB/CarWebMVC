@@ -1,0 +1,16 @@
+﻿@using CarWebMVC.Models.ViewModels
+@model ProductCardViewModel
+
+<div class="card" style="width: 18rem;">
+  <img src="@Model.Thumbnail" />
+  <div class="card-body">
+    <h5 class="card-title">@Html.DisplayFor(model => model.Name)</h5>
+    <p class="card-text">@Html.DisplayFor(model => model.Price)</p>
+    <p class="card-text">
+      @Html.DisplayNameFor(model => model.TransmissionName): @Html.DisplayFor(model => model.TransmissionName)
+    </p>
+    <p class="card-text">
+      @Html.DisplayNameFor(model => model.EngineTypeName): @Html.DisplayFor(model => model.EngineTypeName)
+    </p>
+  </div>
+</div>

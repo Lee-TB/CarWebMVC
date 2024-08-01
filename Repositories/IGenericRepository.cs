@@ -5,14 +5,22 @@ namespace CarWebMVC.Repositories;
 
 public interface IGenericRepository<TEntity>
 {
+    public Task<IEnumerable<TEntity>> GetAsync();
     public Task<IEnumerable<TEntity>> GetAsync(
+        string? includeProperties = null,
         Expression<Func<TEntity, bool>>? filter = null,
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        string includeProperties = "");
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null);
+
+    public Task<IEnumerable<TEntity>> GetAsync(
+        string[]? includeProperties = null,
+        Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null);
+
     public Task<PaginatedList<TEntity>> GetPaginatedAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         string includeProperties = "", int pageIndex = 1, int pageSize = 10);
+
     public Task<TEntity?> GetByIdAsync(object id, string includeProperties = "");
     public void Add(TEntity entity);
     public void Update(TEntity entity);
