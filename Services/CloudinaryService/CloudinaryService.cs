@@ -1,9 +1,6 @@
-
-using System.Security.Cryptography.Xml;
 using CarWebMVC.Models;
 using CloudinaryDotNet;
 using Microsoft.Extensions.Options;
-using Microsoft.Identity.Client;
 
 namespace CarWebMVC.Services;
 
