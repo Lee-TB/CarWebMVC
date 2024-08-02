@@ -17,12 +17,14 @@ public class VehicleModelController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ILuceneService<VehicleModelLuceneDTO> _luceneService;
+    private readonly ICloudinaryService _cloudinaryService;
 
-    public VehicleModelController(IUnitOfWork unitOfWork, IMapper mapper, ILuceneService<VehicleModelLuceneDTO> luceneService)
+    public VehicleModelController(IUnitOfWork unitOfWork, IMapper mapper, ILuceneService<VehicleModelLuceneDTO> luceneService, ICloudinaryService cloudinaryService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _luceneService = luceneService;
+        _cloudinaryService = cloudinaryService;
     }
 
     [HttpGet]
@@ -174,6 +176,9 @@ public class VehicleModelController : Controller
                     // Remove all images which not checked in the form from the database
                     var imagesToRemove = vehicleModelToUpdate.Images.Where(image => !existingImageUrls.Contains(image.ImageUrl)).ToList();
                     _unitOfWork.VehicleImageRepository.RemoveRange(imagesToRemove);
+                    // Also remove these images from cloudinary
+                    var publicIds = imagesToRemove.Select(image => image.PublicId);
+                    await _cloudinaryService.DeleteImagesAsync(publicIds);
                 }
                 else
                 {
@@ -234,8 +239,15 @@ public class VehicleModelController : Controller
         if (vehicleModel != null)
         {
             // Remove from database
+            await _unitOfWork.VehicleModelRepository.LoadCollectionAsync(vehicleModel, "Images");
             _unitOfWork.VehicleModelRepository.Remove(vehicleModel);
             await _unitOfWork.SaveChangesAsync();
+            // Remove images from Cloudinary
+            if(vehicleModel.Images?.Count > 0)
+            {
+                var publicIds = vehicleModel.Images.Select(image => image.PublicId);
+                await _cloudinaryService.DeleteImagesAsync(publicIds);
+            }
             // Remove from Lucene index
             _luceneService.Delete(new VehicleModelLuceneDTO { Id = vehicleModel.Id });
             _luceneService.Commit();

@@ -1,5 +1,6 @@
 using CarWebMVC.Models;
 using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
 
 namespace CarWebMVC.Services;
@@ -7,21 +8,21 @@ namespace CarWebMVC.Services;
 public class CloudinaryService : ICloudinaryService
 {
     private readonly CloudinarySettings _cloudinarySettings;
+    private readonly Cloudinary _cloudinary;
+    private readonly Account _account;
     public CloudinaryService(IOptions<CloudinarySettings> cloudinaryOptions)
     {
         _cloudinarySettings = cloudinaryOptions.Value;
-    }
-
-    public SignatureResponse GenerateSignature()
-    {
-        Account account = new Account(
+        _account = new Account(
             _cloudinarySettings.CloudName,
             _cloudinarySettings.ApiKey,
             _cloudinarySettings.ApiSecret
         );
+        _cloudinary = new Cloudinary(_account);
+    }
 
-        Cloudinary cloudinary = new Cloudinary(account);
-
+    public SignatureResponse GenerateSignature()
+    {       
         var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
 
         var parameters = new SortedDictionary<string, object>
@@ -30,7 +31,7 @@ public class CloudinaryService : ICloudinaryService
             {"source", "uw"},
             {"upload_preset", _cloudinarySettings.UploadPreset}
         };
-        var signature = cloudinary.Api.SignParameters(parameters);
+        var signature = _cloudinary.Api.SignParameters(parameters);
 
         return new SignatureResponse()
         {
@@ -40,5 +41,10 @@ public class CloudinaryService : ICloudinaryService
             CloudName = _cloudinarySettings.CloudName,
             UploadPreset = _cloudinarySettings.UploadPreset
         };
+    }    
+
+    public async Task DeleteImagesAsync(IEnumerable<string> publicIds)
+    {
+        await _cloudinary.DeleteResourcesAsync(ResourceType.Image, publicIds.ToArray());
     }
 }
